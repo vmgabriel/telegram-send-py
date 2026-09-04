@@ -1,0 +1,43 @@
+site_name: Telegram Integration
+site_description: Send and receive Telegram messages through the Bot API
+repo_url: https://github.com/vmgabriel/telegram_integration
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.sections
+    - toc.integrate
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: false
+            show_root_heading: true
+            docstring_style: sphinx
+
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - Command Line Interface: cli.md
+  - API Reference: api.md
