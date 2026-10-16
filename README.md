@@ -52,10 +52,9 @@ telegram-send-py/
 │   └── telegram-send.1                # man page (roff)
 ├── examples/
 │   └── telegram_updates.json   # Example of a Telegram API response
-├── pyproject.toml              # Project metadata, Hatch envs and scripts
+├── pyproject.toml              # Single source of truth: metadata and dependencies
 ├── mkdocs.yml                  # Documentation configuration
 ├── Makefile                    # Task shortcuts
-├── requirements.txt            # Python dependencies
 └── README.md                   # This file
 ```
 
