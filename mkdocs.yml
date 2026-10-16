@@ -1,6 +1,6 @@
 site_name: Telegram Integration
 site_description: Send and receive Telegram messages through the Bot API
-repo_url: https://github.com/vmgabriel/telegram_integration
+repo_url: https://github.com/vmgabriel/telegram-send-py
 theme:
   name: material
   features:

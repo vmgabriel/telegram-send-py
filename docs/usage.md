@@ -8,13 +8,23 @@
 
 ## Installation
 
-### With Hatch (recommended)
+### With pipx (recommended on Linux)
+
+```console
+$ pipx install telegram-send-py
+```
+
+This exposes the `telegram-send`, `telegram-listen` and `telegram-integration`
+commands on your `PATH`.
+
+### With Hatch (contributors)
 
 Hatch manages isolated environments, so the project and all its dependencies
 are installed automatically:
 
 ```console
 $ hatch run test          # creates the environment on first run
+$ make install-dev        # editable install with dev + docs tooling
 ```
 
 ### With a virtual environment
@@ -22,7 +32,7 @@ $ hatch run test          # creates the environment on first run
 ```bash
 python -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -e ".[dev,docs]"
 ```
 
 ## Configuration
@@ -78,10 +88,13 @@ $ python scripts/send_message.py "<b>Hello</b> World" --mode html
 
 ### Using the console entry point
 
-After `pip install -e .`, the same commands are available globally:
+With `pipx install telegram-send-py` (or `pip install -e .`) the same commands
+are available globally:
 
 ```console
 $ telegram-send "**Hello**" -m markdown
+$ telegram-listen --timeout 30 --interval 1
+$ telegram-integration send "**Hello**"           # unified app
 ```
 
 ## Listening for messages
@@ -127,18 +140,35 @@ receiver.listen()
 
 | Target                    | Description                                   |
 |---------------------------|-----------------------------------------------|
-| `make install`            | Create venv and install dependencies          |
-| `make install-dev`        | Install package editable with console scripts|
+| `make install`            | Create the runtime Hatch environment          |
+| `make install-dev`        | Install editable with dev + docs extras       |
 | `make test`               | Run unit tests via Hatch                      |
 | `make test-cov`           | Run tests with a coverage report              |
 | `make test-filter K=-k foo` | Run a subset of tests                     |
+| `make lint`               | Run Ruff and mypy                             |
+| `make format`             | Auto-format with Ruff                         |
+| `make build`              | Build the sdist and wheel                     |
+| `make completion`         | Generate bash/zsh/fish scripts into `completions/` |
 | `make run-send MSG="hi"`  | Send a message                                |
 | `make run-send MSG="hi" MODE=html` | Send as HTML                      |
 | `make run-listen SCRIPTS="a.py"` | Listen and trigger scripts          |
 | `make docs-build`         | Build the docs site                           |
 | `make docs-serve`         | Serve docs at http://localhost:8000           |
-| `make build`              | Build a distributable package                 |
-| `make clean`              | Remove artifacts and caches                   |
+| `make clean`              | Remove artifacts, caches and generated files  |
+
+## Shell completion
+
+```console
+$ telegram-integration --install-completion
+$ make completion        # writes bash/zsh/fish scripts into completions/
+```
+
+## Running as a systemd user service
+
+A ready-to-edit user unit lives at `extras/telegram-send.service.example`. See
+the "Running as a systemd user service" section of the README for install
+steps. The CLI shuts down cleanly on `Ctrl+C`, and the unit maps
+`systemctl stop` to `SIGINT`.
 
 ## Running tests
 

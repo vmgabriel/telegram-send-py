@@ -3,7 +3,7 @@ requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
-name = "telegram-integration"
+name = "telegram-send-py"
 version = "1.0.0"
 description = "Send and receive Telegram messages through the Bot API, with script triggering"
 readme = "README.md"
@@ -62,6 +62,7 @@ include = [
   "/tests",
   "/scripts",
   "/docs",
+  "/extras",
   "/README.md",
   "/Makefile",
   "/mkdocs.yml",

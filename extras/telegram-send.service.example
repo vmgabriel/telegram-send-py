@@ -1,0 +1,58 @@
+# Example systemd *user* service for telegram-send-py.
+#
+# It runs `telegram-listen` in the background for the logged-in user and
+# reads the credentials from ~/.config/telegram-send/config.toml.
+#
+# Install it with:
+#
+#   mkdir -p ~/.config/systemd/user
+#   cp extras/telegram-send.service.example ~/.config/systemd/user/telegram-send.service
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now telegram-send.service
+#   systemctl --user status telegram-send.service
+#   journalctl --user -u telegram-send.service -f
+#
+# To keep the service running after you log out, enable lingering once:
+#
+#   loginctl enable-linger "$USER"
+
+[Unit]
+Description=Telegram listener (telegram-send-py)
+Documentation=man:telegram-send(1)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# Path of the `telegram-listen` entry point.
+#   - pipx:      %h/.local/bin/telegram-listen
+#   - system:    /usr/bin/telegram-listen
+# Adjust if your installation lives somewhere else (e.g. `which telegram-listen`).
+ExecStart=%h/.local/bin/telegram-listen
+
+# Restart automatically if the process dies (e.g. after a network error).
+Restart=on-failure
+RestartSec=5
+
+# The CLI handles Ctrl+C (SIGINT) with a clean shutdown, so map systemd's
+# stop signal to SIGINT as well.
+KillSignal=SIGINT
+
+# --- Hardening -----------------------------------------------------------
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+
+# The listener persists its offset in the XDG data directory, so it must be
+# writable even though the rest of $HOME is read-only.
+ReadWritePaths=%h/.local/share/telegram-send
+
+# Optional environment fallback when no config file is used. Prefer the XDG
+# file at ~/.config/telegram-send/config.toml.
+#Environment=TELEGRAM_TOKEN=123456:ABC-DEF
+#Environment=TELEGRAM_CHANNEL_ID=@your_channel
+
+[Install]
+WantedBy=default.target

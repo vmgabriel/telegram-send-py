@@ -4,9 +4,12 @@ __pycache__/
 .env
 .idea/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 *.egg-info/
 dist/
 build/
 site/
 htmlcov/
 .coverage
+completions/

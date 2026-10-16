@@ -1,0 +1,129 @@
+.\" Manual page for telegram-send-py.
+.\" View locally with: man ./extras/telegram-send.1
+.TH TELEGRAM-SEND 1 "2026-10-15" "telegram-send-py 1.0.0" "User Commands"
+.SH NAME
+telegram-send, telegram-listen, telegram-integration \- send and receive Telegram messages
+.SH SYNOPSIS
+.B telegram-send
+[\fIOPTIONS\fR] \fIMESSAGE\fR
+.br
+.B telegram-listen
+[\fIOPTIONS\fR]
+.br
+.B telegram-integration
+\fICOMMAND\fR [\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B telegram-send-py
+is a small command\-line front end for the Telegram Bot API. It can send a
+single message to a chat or channel, and listen for incoming updates while
+optionally triggering external scripts for every received message.
+.PP
+Three entry points are installed. The
+.B telegram-send
+and
+.B telegram-listen
+commands each wrap a single action, while
+.B telegram-integration
+exposes both as subcommands together with shell completion generation.
+.SH COMMANDS
+The unified
+.B telegram-integration
+command exposes the following subcommands:
+.TP
+.B send
+Send a single message. Accepts the same options as
+.BR telegram-send .
+.TP
+.B listen
+Continuously poll for new updates until interrupted (Ctrl+C). Accepts the same
+options as
+.BR telegram-listen .
+.TP
+.B completion
+Print a shell completion script to standard output. Takes the shell name
+(\fBbash\fR, \fBzsh\fR or \fBfish\fR) as its argument; use
+.B \-\-program
+to generate the script for a different command name.
+.SH OPTIONS
+Options shared by the sending and listening commands:
+.TP
+.BR \-\-token " " \fITOKEN\fR
+Telegram bot token. Overrides the value in the configuration file and the
+.B TELEGRAM_TOKEN
+environment variable.
+.TP
+.BR \-\-channel\-id " " \fICHAT\fR
+Target channel or chat. Overrides the value in the configuration file and the
+.B TELEGRAM_CHANNEL_ID
+environment variable.
+.SS Send options
+.TP
+.BR \-m ", " \-\-mode " " \fIMODE\fR
+Message parse mode: \fBmarkdown\fR (default), \fBhtml\fR or \fBplain\fR.
+.SS Listen options
+.TP
+.BR \-\-timeout " " \fISECONDS\fR
+Long\-polling timeout in seconds (default: 30).
+.TP
+.BR \-\-interval " " \fISECONDS\fR
+Delay between polls in seconds (default: 1.0).
+.TP
+.BR \-s ", " \-\-scripts " " \fIPATH\fR
+External script to run for every received message. May be given multiple
+times. The full update is exported as JSON through the
+.B TELEGRAM_MESSAGE
+environment variable.
+.SH CONFIGURATION
+Credentials are read from
+.I ~/.config/telegram-send/config.toml
+(or
+.IB $XDG_CONFIG_HOME /telegram-send/config.toml
+when set) using a small TOML file:
+.PP
+.RS 4
+.nf
+token   = "123456:ABC\-DEF"
+chat_id = "@your_channel"
+.fi
+.RE
+.PP
+Keep the file private, for example with \fBchmod 600\fR.
+.SH ENVIRONMENT
+.TP
+.B TELEGRAM_TOKEN
+Fallback bot token used when the configuration file is absent.
+.TP
+.B TELEGRAM_CHANNEL_ID
+Fallback channel or chat id used when the configuration file is absent.
+.TP
+.B TELEGRAM_MESSAGE
+Set by
+.B telegram-listen
+for every triggered script; contains the JSON\-encoded Telegram update.
+.SH FILES
+.TP
+.I ~/.config/telegram-send/config.toml
+User configuration (bot token and chat id).
+.TP
+.I ~/.local/share/telegram-send/state.db
+SQLite database storing the last processed update offset.
+.SH EXAMPLES
+.TP
+.B telegram-send "**Hello** from *Telegram*"
+Send a Markdown message.
+.TP
+.B telegram-send "<b>Hello</b>" \-m html
+Send an HTML message.
+.TP
+.B telegram-listen \-\-scripts ./handler.py
+Listen and run a script for every incoming message.
+.TP
+.B telegram-integration completion bash > /etc/bash_completion.d/telegram-integration
+Generate a Bash completion script.
+.SH SEE ALSO
+.BR systemctl (1),
+.BR systemd.service (5)
+.PP
+Project page: <https://github.com/vmgabriel/telegram-send-py>
+.SH AUTHOR
+Gabriel Vargas Monroy.
