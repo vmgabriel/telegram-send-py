@@ -16,6 +16,12 @@
 
 ::: telegram_integration.cli.listen
 
+## Domain
+
+::: telegram_integration.domain.entities.ListenerState
+
+::: telegram_integration.domain.repositories.ListenerStateRepository
+
 ## Infrastructure
 
 ::: telegram_integration.infrastructure.xdg_config.TelegramConfig
@@ -29,3 +35,9 @@
 ::: telegram_integration.infrastructure.xdg_config.get_config_file
 
 ::: telegram_integration.infrastructure.xdg_config.get_data_dir
+
+::: telegram_integration.infrastructure.sqlite_state.SqliteStateRepository
+    options:
+        show_if_no_docstring: true
+
+::: telegram_integration.infrastructure.sqlite_state.SqliteStateError

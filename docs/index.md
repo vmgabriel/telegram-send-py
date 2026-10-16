@@ -38,7 +38,8 @@ telegram_integration/
 │   ├── sender.py               # Message sending logic
 │   ├── receiver.py             # Update polling and script triggering
 │   ├── cli.py                  # Typer command-line applications
-│   └── infrastructure/         # XDG paths and TOML configuration
+│   ├── domain/                 # Entities and repository ports (DDD)
+│   └── infrastructure/         # XDG config and SQLite state adapters
 ├── scripts/                    # Runnable entry-point scripts
 ├── tests/                      # Unit tests
 ├── docs/                       # MkDocs documentation sources

@@ -23,8 +23,12 @@ telegram_integration/
 │       ├── receiver.py       # Message receiving and script triggering
 │       ├── cli.py            # Typer command-line applications
 │       ├── py.typed          # PEP 561 typing marker
+│       ├── domain/           # Entities and repository ports (DDD)
+│       │   ├── entities.py   # ListenerState entity
+│       │   └── repositories.py # ListenerStateRepository port
 │       └── infrastructure/
-│           └── xdg_config.py # XDG paths and TOML configuration model
+│           ├── xdg_config.py # XDG paths and TOML configuration model
+│           └── sqlite_state.py # SQLite listener-state repository
 ├── scripts/
 │   ├── send_message.py       # CLI to send markdown messages
 │   └── listen_messages.py    # CLI to listen for messages

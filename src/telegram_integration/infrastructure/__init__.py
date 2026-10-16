@@ -6,6 +6,11 @@ domain layers depend on abstractions; the concrete implementations live
 here.
 """
 
+from .sqlite_state import (
+    STATE_DB_FILENAME,
+    SqliteStateError,
+    SqliteStateRepository,
+)
 from .xdg_config import (
     APP_NAME,
     CONFIG_FILENAME,
@@ -24,8 +29,11 @@ from .xdg_config import (
 __all__ = [
     "APP_NAME",
     "CONFIG_FILENAME",
+    "STATE_DB_FILENAME",
     "ConfigFileNotFoundError",
     "InvalidConfigError",
+    "SqliteStateError",
+    "SqliteStateRepository",
     "TelegramConfig",
     "TelegramConfigError",
     "ensure_config_dir",
