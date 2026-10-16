@@ -1,0 +1,81 @@
+# Maintainer: Gabriel Vargas Monroy
+# Arch Linux PKGBUILD for telegram-send-py.
+#
+# This build tracks the GitHub master branch, as required for this test.
+# Run makepkg from this directory: packaging/arch
+#
+# For a reproducible release package, prefer the versioned sdist published on
+# PyPI (files.pythonhosted.org/packages/source/t/telegram-send-py/) and pin its
+# sha256 in sha256sums instead of using SKIP.
+#
+# For fully offline tests, copy the locally built dist/telegram_send_py-*.tar.gz
+# next to this PKGBUILD and reference it as a relative file source, pinning its
+# sha256 as well.
+
+pkgname=telegram-send-py
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Send and receive Telegram messages through the Bot API, with script triggering'
+arch=('any')
+url='https://github.com/vmgabriel/telegram-send-py'
+license=('MIT')
+depends=(
+  'python-aiosqlite'
+  'python-platformdirs'
+  'python-pydantic'
+  'python-pydantic-settings'
+  'python-requests'
+  'python-typer'
+)
+makedepends=(
+  'git'
+  'python-build'
+  'python-hatchling'
+  'python-installer'
+)
+checkdepends=('python-pytest')
+source=("$pkgname::git+${url}.git#branch=master")
+sha256sums=('SKIP')
+
+build() {
+  cd "$pkgname"
+  python -m build --wheel --no-isolation
+}
+
+check() {
+  cd "$pkgname"
+  # tests/conftest.py adds src/ to sys.path, so no install is needed first.
+  python -m pytest -q
+}
+
+package() {
+  cd "$pkgname"
+
+  # Installs the package into site-packages and drops the console entry points
+  # (telegram-send, telegram-listen, telegram-integration) into /usr/bin.
+  # Arch guidelines: do not ship .pyc files, the python package's pacman hook
+  # byte-compiles them in place on installation.
+  python -m installer --no-compile-bytecode \
+    --destdir="$pkgdir" dist/*.whl
+
+  # MIT is not covered by Arch's `licenses` package, so the license text must
+  # be shipped with the package (namcap requirement).
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+
+  # systemd user unit. The shipped example uses a pipx-style ExecStart, so we
+  # pin it to the packaged binary under /usr/bin.
+  install -Dm644 extras/telegram-send.service.example \
+    "$pkgdir/usr/lib/systemd/user/telegram-listen.service"
+  sed -i 's|%h/.local/bin/telegram-listen|/usr/bin/telegram-listen|' \
+    "$pkgdir/usr/lib/systemd/user/telegram-listen.service"
+
+  # Manual page (compressed for consistency with the rest of the system) plus
+  # aliases for the other two entry points.
+  install -Dm644 extras/telegram-send.1 \
+    "$pkgdir/usr/share/man/man1/telegram-send.1"
+  gzip -9n "$pkgdir/usr/share/man/man1/telegram-send.1"
+  ln -s telegram-send.1.gz \
+    "$pkgdir/usr/share/man/man1/telegram-listen.1.gz"
+  ln -s telegram-send.1.gz \
+    "$pkgdir/usr/share/man/man1/telegram-integration.1.gz"
+}

@@ -9,6 +9,7 @@ description = "Send and receive Telegram messages through the Bot API, with scri
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
+license-files = ["LICENSE"]
 keywords = ["telegram", "bot", "integration", "messaging", "xdg", "cli"]
 authors = [
   { name = "Gabriel Vargas Monroy" },
@@ -64,6 +65,7 @@ include = [
   "/docs",
   "/extras",
   "/README.md",
+  "/LICENSE",
   "/Makefile",
   "/mkdocs.yml",
 ]
