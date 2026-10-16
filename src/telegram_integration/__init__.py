@@ -6,8 +6,8 @@ Public API exposing :class:`~telegram_integration.client.TelegramClient`,
 """
 
 from .client import TelegramClient
-from .sender import MessageSender
 from .receiver import MessageReceiver
+from .sender import MessageSender
 
 __version__ = "1.0.0"
 __all__ = ["TelegramClient", "MessageSender", "MessageReceiver"]

@@ -1,7 +1,9 @@
-import pytest
 from unittest.mock import Mock, patch
 
-from telegram_integration import TelegramClient, MessageSender, MessageReceiver
+import pytest
+
+from telegram_integration import MessageReceiver, MessageSender, TelegramClient
+from telegram_integration.infrastructure import ConfigFileNotFoundError
 
 
 class TestTelegramClient:
@@ -17,12 +19,12 @@ class TestTelegramClient:
 
     def test_init_missing_token(self, monkeypatch):
         monkeypatch.delenv("TELEGRAM_TOKEN", raising=False)
-        with pytest.raises(ValueError, match="TELEGRAM_TOKEN is required"):
+        with pytest.raises(ConfigFileNotFoundError, match="TELEGRAM_TOKEN"):
             TelegramClient()
 
     def test_init_missing_channel_id(self, monkeypatch):
         monkeypatch.delenv("TELEGRAM_CHANNEL_ID", raising=False)
-        with pytest.raises(ValueError, match="TELEGRAM_CHANNEL_ID is required"):
+        with pytest.raises(ConfigFileNotFoundError, match="TELEGRAM_CHANNEL_ID"):
             TelegramClient()
 
     @patch("telegram_integration.client.requests.get")

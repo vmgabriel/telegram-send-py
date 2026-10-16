@@ -9,6 +9,7 @@ Telegram Bot API.
   channel or chat.
 - Listen for incoming messages and trigger external scripts in response.
 - Command-line interface powered by **Typer**.
+- Configuration in TOML following the **XDG Base Directory** specification.
 - Environments and tasks managed by **Hatch**.
 - Generated documentation built with **MkDocs**.
 
@@ -16,7 +17,7 @@ Telegram Bot API.
 
 ```console
 $ pip install -r requirements.txt
-$ cp .env.example .env       # then fill in your credentials
+$ mkdir -p ~/.config/telegram-send              # then add token and chat_id
 $ python scripts/send_message.py "**Hello** from Telegram"
 ```
 
@@ -26,7 +27,7 @@ Or through Hatch:
 $ hatch run send "**Hello** from Telegram"
 ```
 
-See [Usage](usage.md) for the full guide.
+See [Usage](usage.md) for the full configuration guide.
 
 ## Project layout
 
@@ -36,7 +37,8 @@ telegram_integration/
 │   ├── client.py               # Telegram Bot API wrapper
 │   ├── sender.py               # Message sending logic
 │   ├── receiver.py             # Update polling and script triggering
-│   └── cli.py                  # Typer command-line applications
+│   ├── cli.py                  # Typer command-line applications
+│   └── infrastructure/         # XDG paths and TOML configuration
 ├── scripts/                    # Runnable entry-point scripts
 ├── tests/                      # Unit tests
 ├── docs/                       # MkDocs documentation sources

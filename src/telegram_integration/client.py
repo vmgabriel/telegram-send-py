@@ -3,15 +3,18 @@
 The :class:`TelegramClient` is a thin wrapper around the Telegram Bot
 HTTP API. It handles authentication via the bot token and exposes two
 common operations: sending a message and long-polling for updates.
+
+Credentials are resolved through
+:func:`telegram_integration.infrastructure.load_config`, which reads the XDG
+configuration file (``~/.config/telegram-send/config.toml``) and falls back to
+the ``TELEGRAM_TOKEN`` and ``TELEGRAM_CHANNEL_ID`` environment variables.
 """
 
-import os
-from typing import Any, Dict, Optional
+from typing import Any, cast
 
-import dotenv
 import requests
 
-dotenv.load_dotenv()
+from .infrastructure import load_config
 
 API_BASE = "https://api.telegram.org"
 
@@ -19,33 +22,46 @@ API_BASE = "https://api.telegram.org"
 class TelegramClient:
     """Handles communication with the Telegram Bot API.
 
-    The bot token and the default chat (channel) identifier are read from
-    the ``TELEGRAM_TOKEN`` and ``TELEGRAM_CHANNEL_ID`` environment
-    variables unless explicitly provided.
+    The bot token and the default chat (channel) identifier are read from the
+    XDG configuration file unless explicitly provided, falling back to the
+    ``TELEGRAM_TOKEN`` and ``TELEGRAM_CHANNEL_ID`` environment variables.
 
-    :param token: Telegram bot token obtained from BotFather.
-    :param channel_id: Chat or channel id where messages are sent.
-    :raises ValueError: When the token or channel id are missing.
+    Args:
+        token: Telegram bot token obtained from BotFather. When omitted it is
+            read from the configuration.
+        channel_id: Chat or channel id where messages are sent. When omitted
+            it is read from the configuration.
+
+    Raises:
+        telegram_integration.infrastructure.ConfigFileNotFoundError: When no
+            explicit credentials are given and neither a configuration file
+            nor the environment fallback provides them.
     """
 
-    def __init__(self, token: Optional[str] = None, channel_id: Optional[str] = None):
-        self.token = token or os.getenv("TELEGRAM_TOKEN")
-        self.channel_id = channel_id or os.getenv("TELEGRAM_CHANNEL_ID")
+    def __init__(self, token: str | None = None, channel_id: str | None = None) -> None:
+        if token is None or channel_id is None:
+            config = load_config()
+            token = token if token is not None else config.token
+            channel_id = channel_id if channel_id is not None else config.chat_id
 
-        if not self.token:
-            raise ValueError("TELEGRAM_TOKEN is required")
-        if not self.channel_id:
-            raise ValueError("TELEGRAM_CHANNEL_ID is required")
-
+        self.token = token
+        self.channel_id = channel_id
         self.base_url = f"{API_BASE}/bot{self.token}"
 
-    def send_message(self, text: str, parse_mode: str = "Markdown") -> Dict[str, Any]:
+    def send_message(
+        self, text: str, parse_mode: str | None = "Markdown"
+    ) -> dict[str, Any]:
         """Send a text message to the configured channel.
 
-        :param text: The message body to send.
-        :param parse_mode: ``Markdown``, ``HTML`` or ``None`` for plain.
-        :returns: The Telegram API response dictionary.
-        :raises requests.HTTPError: When the API returns an error.
+        Args:
+            text: The message body to send.
+            parse_mode: ``Markdown``, ``HTML`` or ``None`` for plain text.
+
+        Returns:
+            The Telegram API response dictionary.
+
+        Raises:
+            requests.HTTPError: When the API returns an error status code.
         """
         response = requests.post(
             f"{self.base_url}/sendMessage",
@@ -56,17 +72,24 @@ class TelegramClient:
             },
         )
         response.raise_for_status()
-        return response.json()
+        return cast("dict[str, Any]", response.json())
 
-    def get_updates(self, offset: Optional[int] = None, timeout: int = 30) -> Dict[str, Any]:
+    def get_updates(
+        self, offset: int | None = None, timeout: int = 30
+    ) -> dict[str, Any]:
         """Long-poll for incoming updates.
 
-        :param offset: Update id from which to start receiving updates.
-        :param timeout: Polling timeout in seconds.
-        :returns: The Telegram API response with a ``result`` list.
-        :raises requests.HTTPError: When the API returns an error.
+        Args:
+            offset: Update id from which to start receiving updates.
+            timeout: Polling timeout in seconds.
+
+        Returns:
+            The Telegram API response with a ``result`` list.
+
+        Raises:
+            requests.HTTPError: When the API returns an error status code.
         """
-        params = {"timeout": timeout}
+        params: dict[str, int] = {"timeout": timeout}
         if offset is not None:
             params["offset"] = offset
 
@@ -75,4 +98,4 @@ class TelegramClient:
             params=params,
         )
         response.raise_for_status()
-        return response.json()
+        return cast("dict[str, Any]", response.json())

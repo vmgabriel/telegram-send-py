@@ -1,7 +1,8 @@
 from unittest.mock import Mock, patch
 
-from telegram_integration.cli import listen_app, send_app
 from typer.testing import CliRunner
+
+from telegram_integration.cli import listen_app, send_app
 
 runner = CliRunner()
 

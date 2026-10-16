@@ -21,7 +21,10 @@ telegram_integration/
 │       ├── client.py         # Telegram API communication
 │       ├── sender.py         # Message sending logic
 │       ├── receiver.py       # Message receiving and script triggering
-│       └── cli.py            # Typer command-line applications
+│       ├── cli.py            # Typer command-line applications
+│       ├── py.typed          # PEP 561 typing marker
+│       └── infrastructure/
+│           └── xdg_config.py # XDG paths and TOML configuration model
 ├── scripts/
 │   ├── send_message.py       # CLI to send markdown messages
 │   └── listen_messages.py    # CLI to listen for messages
@@ -35,14 +38,14 @@ telegram_integration/
 ├── pyproject.toml            # Project metadata, Hatch envs and scripts
 ├── mkdocs.yml                # Documentation configuration
 ├── Makefile                  # Task shortcuts
-├── .env.example              # Environment template
+├── .env.example              # Environment variable template (CI/Docker fallback)
 ├── requirements.txt          # Python dependencies
 └── README.md                 # This file
 ```
 
 ## Requirements
 
-- Python 3.8+
+- Python 3.11+
 - A Telegram Bot token (obtained from [@BotFather](https://t.me/BotFather))
 - A channel or chat where the bot is a member
 
@@ -66,18 +69,36 @@ source venv/bin/activate      # Linux / macOS
 pip install -r requirements.txt
 ```
 
-Configure your credentials:
+Configure your credentials using the XDG Base Directory specification. The
+configuration lives at:
+
+```
+$XDG_CONFIG_HOME/telegram-send/config.toml   # defaults to ~/.config/telegram-send/config.toml
+```
+
+Create it with your token and chat id:
 
 ```bash
-cp .env.example .env
+mkdir -p ~/.config/telegram-send
+cat > ~/.config/telegram-send/config.toml <<'EOF'
+token = "your_bot_token_here"
+chat_id = "@your_channel_or_chat_id"
+EOF
+chmod 600 ~/.config/telegram-send/config.toml
 ```
 
-Edit `.env`:
+Or generate it from Python:
 
+```python
+from telegram_integration.infrastructure import TelegramConfig, write_config
+
+write_config(TelegramConfig(token="your_bot_token_here", chat_id="@your_channel"))
 ```
-TELEGRAM_TOKEN=your_bot_token_here
-TELEGRAM_CHANNEL_ID=@your_channel_or_chat_id
-```
+
+For CI/CD and Docker you can instead export the `TELEGRAM_TOKEN` and
+`TELEGRAM_CHANNEL_ID` environment variables. They are used as a fallback when
+the file does not exist (and fill in any missing value). If no credentials are
+found anywhere, a clear `ConfigFileNotFoundError` explains how to fix it.
 
 The channel ID can be the username of a public channel (e.g. `@mychannel`) or the numeric chat ID for private groups.
 

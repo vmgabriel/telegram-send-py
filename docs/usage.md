@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Python 3.8+
+- Python 3.11+
 - A Telegram bot token from [@BotFather](https://t.me/BotFather)
 - A channel or chat where the bot is a member
 
@@ -25,12 +25,37 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Then configure the environment variables:
+## Configuration
+
+Credentials are read from the configuration file defined by the
+[XDG Base Directory](https://specifications.freedesktop.org/basedir-spec/latest/)
+specification:
 
 ```
-TELEGRAM_TOKEN=your_bot_token_here
-TELEGRAM_CHANNEL_ID=@your_channel_or_chat_id
+$XDG_CONFIG_HOME/telegram-send/config.toml   # defaults to ~/.config/telegram-send/config.toml
 ```
+
+The file uses the TOML format:
+
+```toml
+token = "your_bot_token_here"
+chat_id = "@your_channel_or_chat_id"
+```
+
+You can create it by hand or generate it from Python:
+
+```python
+from telegram_integration.infrastructure import TelegramConfig, write_config
+
+write_config(TelegramConfig(token="your_bot_token_here", chat_id="@your_channel"))
+```
+
+The file is created with `0600` permissions so that the token stays private.
+
+For CI/CD and Docker, export the `TELEGRAM_TOKEN` and `TELEGRAM_CHANNEL_ID`
+environment variables instead. They act as a fallback when the file is missing
+and complete any value the file does not define. When no credentials are found,
+a `ConfigFileNotFoundError` is raised with instructions to create the file.
 
 The channel id can be a public channel username (e.g. `@mychannel`) or the
 numeric chat id for private groups.

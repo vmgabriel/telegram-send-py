@@ -6,7 +6,7 @@ power the repository ``scripts/`` and the ``telegram-send`` /
 ``telegram-listen`` console entry points.
 """
 
-from typing import List, Optional
+from typing import Any
 
 import typer
 
@@ -17,7 +17,7 @@ send_app = typer.Typer(help="Send a message to a Telegram channel.")
 listen_app = typer.Typer(help="Listen for messages in a Telegram channel.")
 
 
-def _message_handler(message: dict) -> None:
+def _message_handler(message: dict[str, Any]) -> None:
     """Default handler that echoes any received update to the console."""
     typer.echo(f"Update received: {message}")
 
@@ -31,10 +31,10 @@ def send(
         "-m",
         help="Message parse mode: markdown, html or plain.",
     ),
-    token: Optional[str] = typer.Option(
+    token: str | None = typer.Option(
         None, "--token", envvar="TELEGRAM_TOKEN", help="Telegram bot token."
     ),
-    channel_id: Optional[str] = typer.Option(
+    channel_id: str | None = typer.Option(
         None,
         "--channel-id",
         envvar="TELEGRAM_CHANNEL_ID",
@@ -72,16 +72,16 @@ def send(
 def listen(
     timeout: int = typer.Option(30, "--timeout", help="Long polling timeout."),
     interval: float = typer.Option(1.0, "--interval", help="Poll interval seconds."),
-    scripts: Optional[List[str]] = typer.Option(
+    scripts: list[str] | None = typer.Option(
         None,
         "--scripts",
         "-s",
         help="External scripts to trigger for each received message.",
     ),
-    token: Optional[str] = typer.Option(
+    token: str | None = typer.Option(
         None, "--token", envvar="TELEGRAM_TOKEN", help="Telegram bot token."
     ),
-    channel_id: Optional[str] = typer.Option(
+    channel_id: str | None = typer.Option(
         None,
         "--channel-id",
         envvar="TELEGRAM_CHANNEL_ID",
@@ -96,9 +96,7 @@ def listen(
     if token or channel_id:
         from .client import TelegramClient
 
-        receiver = MessageReceiver(
-            TelegramClient(token=token, channel_id=channel_id)
-        )
+        receiver = MessageReceiver(TelegramClient(token=token, channel_id=channel_id))
     else:
         receiver = MessageReceiver()
 
