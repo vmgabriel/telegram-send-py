@@ -6,6 +6,7 @@ domain layers depend on abstractions; the concrete implementations live
 here.
 """
 
+from .scripts import TELEGRAM_MESSAGE_ENV, ScriptRunner
 from .sqlite_state import (
     STATE_DB_FILENAME,
     SqliteStateError,
@@ -30,8 +31,10 @@ __all__ = [
     "APP_NAME",
     "CONFIG_FILENAME",
     "STATE_DB_FILENAME",
+    "TELEGRAM_MESSAGE_ENV",
     "ConfigFileNotFoundError",
     "InvalidConfigError",
+    "ScriptRunner",
     "SqliteStateError",
     "SqliteStateRepository",
     "TelegramConfig",

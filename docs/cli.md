@@ -1,7 +1,26 @@
 # Command Line Interface
 
-Both commands are implemented with **Typer** and can be invoked through the
-repository scripts, the console entry points, or Hatch.
+The CLI is implemented with **Typer** and exposed through three console
+entry points:
+
+| Entry point             | Description                                              |
+|-------------------------|----------------------------------------------------------|
+| `telegram-send`         | Send a single message.                                   |
+| `telegram-listen`       | Listen for incoming messages.                            |
+| `telegram-integration`  | Unified app with `send`, `listen` and `completion`.      |
+
+The commands can also be invoked through the repository scripts or Hatch.
+
+## Unified app: `telegram-integration`
+
+```console
+$ telegram-integration send "**Bold** *italic*"
+$ telegram-integration listen --timeout 60 --interval 2
+$ telegram-integration --help
+```
+
+The `send` and `listen` subcommands accept exactly the same options as the
+standalone `telegram-send` / `telegram-listen` entry points below.
 
 ## `send_message.py` / `telegram-send`
 
@@ -70,9 +89,23 @@ $ hatch run test
 
 ## Shell completion
 
-Typer-based commands support shell completion. Try:
+Every Typer app supports completion through the built-in flags:
 
 ```console
 $ telegram-send --install-completion
 $ telegram-listen --install-completion
+$ telegram-integration --install-completion
+```
+
+The unified app also exposes a hidden `completion` command that prints the
+completion script for `bash`, `zsh` or `fish`, which is convenient for
+packaging and for writing it to a directory:
+
+```console
+$ telegram-integration completion bash > /etc/bash_completion.d/telegram-integration
+$ telegram-integration completion zsh  > ~/.zsh/completions/_telegram-integration
+$ telegram-integration completion fish > ~/.config/fish/completions/telegram-integration.fish
+
+# Generate the script for a different program name:
+$ telegram-integration completion bash --program telegram-send
 ```

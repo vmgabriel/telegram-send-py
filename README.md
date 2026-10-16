@@ -135,6 +135,11 @@ Installed console entry points (`pip install -e .`):
 ```bash
 telegram-send "**Hello**" -m markdown
 telegram-listen --timeout 30 --interval 1
+
+# Unified app with send/listen subcommands and shell completion:
+telegram-integration send "**Hello**"
+telegram-integration listen --timeout 30
+telegram-integration completion bash > /etc/bash_completion.d/telegram-integration
 ```
 
 ### Listening for messages

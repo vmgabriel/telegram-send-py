@@ -49,8 +49,9 @@ docs = [
 ]
 
 [project.scripts]
-telegram-send = "telegram_integration.cli:send_app"
-telegram-listen = "telegram_integration.cli:listen_app"
+telegram-send = "telegram_integration.presentation.cli:send_app"
+telegram-listen = "telegram_integration.presentation.cli:listen_app"
+telegram-integration = "telegram_integration.presentation.cli:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/telegram_integration"]
@@ -102,6 +103,10 @@ plugins = ["pydantic.mypy"]
 module = ["platformdirs.*"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = ["typer.completion"]
+implicit_reexport = true
+
 [tool.ruff]
 line-length = 88
 target-version = "py311"
@@ -115,3 +120,5 @@ known-first-party = ["telegram_integration"]
 [tool.ruff.lint.per-file-ignores]
 # Typer relies on calls such as `typer.Option(...)` in argument defaults.
 "src/telegram_integration/cli.py" = ["B008"]
+"src/telegram_integration/presentation/cli.py" = ["B008"]
+"src/telegram_integration/presentation/completions.py" = ["B008"]

@@ -12,9 +12,11 @@
     options:
         show_if_no_docstring: true
 
-::: telegram_integration.cli.send
+::: telegram_integration.presentation.cli.send
 
-::: telegram_integration.cli.listen
+::: telegram_integration.presentation.cli.listen
+
+::: telegram_integration.presentation.completions.completion
 
 ## Application
 
@@ -51,3 +53,7 @@
         show_if_no_docstring: true
 
 ::: telegram_integration.infrastructure.sqlite_state.SqliteStateError
+
+::: telegram_integration.infrastructure.scripts.ScriptRunner
+    options:
+        show_if_no_docstring: true
