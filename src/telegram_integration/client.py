@@ -49,13 +49,18 @@ class TelegramClient:
         self.base_url = f"{API_BASE}/bot{self.token}"
 
     def send_message(
-        self, text: str, parse_mode: str | None = "Markdown"
+        self,
+        text: str,
+        parse_mode: str | None = "Markdown",
+        chat_id: str | None = None,
     ) -> dict[str, Any]:
         """Send a text message to the configured channel.
 
         Args:
             text: The message body to send.
             parse_mode: ``Markdown``, ``HTML`` or ``None`` for plain text.
+            chat_id: Target chat. When ``None`` the client's configured
+                channel is used.
 
         Returns:
             The Telegram API response dictionary.
@@ -66,7 +71,7 @@ class TelegramClient:
         response = requests.post(
             f"{self.base_url}/sendMessage",
             json={
-                "chat_id": self.channel_id,
+                "chat_id": chat_id if chat_id is not None else self.channel_id,
                 "text": text,
                 "parse_mode": parse_mode,
             },

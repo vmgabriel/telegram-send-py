@@ -16,11 +16,21 @@
 
 ::: telegram_integration.cli.listen
 
+## Application
+
+::: telegram_integration.application.send_message.SendMessageUseCase
+
+::: telegram_integration.application.send_message.SendMessageResult
+
+::: telegram_integration.application.listen_messages.ListenMessagesUseCase
+
 ## Domain
 
 ::: telegram_integration.domain.entities.ListenerState
 
 ::: telegram_integration.domain.repositories.ListenerStateRepository
+
+::: telegram_integration.domain.ports.TelegramGateway
 
 ## Infrastructure
 

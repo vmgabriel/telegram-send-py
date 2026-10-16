@@ -23,8 +23,13 @@ telegram_integration/
 │       ├── receiver.py       # Message receiving and script triggering
 │       ├── cli.py            # Typer command-line applications
 │       ├── py.typed          # PEP 561 typing marker
-│       ├── domain/           # Entities and repository ports (DDD)
+│       ├── application/      # Use cases orchestrating the ports
+│       │   ├── send_message.py
+│       │   └── listen_messages.py
+│       ├── domain/           # Entities, exceptions and ports (DDD)
 │       │   ├── entities.py   # ListenerState entity
+│       │   ├── exceptions.py # Domain exceptions
+│       │   ├── ports.py      # TelegramGateway port
 │       │   └── repositories.py # ListenerStateRepository port
 │       └── infrastructure/
 │           ├── xdg_config.py # XDG paths and TOML configuration model

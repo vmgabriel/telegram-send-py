@@ -38,7 +38,8 @@ telegram_integration/
 │   ├── sender.py               # Message sending logic
 │   ├── receiver.py             # Update polling and script triggering
 │   ├── cli.py                  # Typer command-line applications
-│   ├── domain/                 # Entities and repository ports (DDD)
+│   ├── application/            # Use cases (framework-independent)
+│   ├── domain/                 # Entities, exceptions and ports (DDD)
 │   └── infrastructure/         # XDG config and SQLite state adapters
 ├── scripts/                    # Runnable entry-point scripts
 ├── tests/                      # Unit tests
